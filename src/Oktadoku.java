@@ -3,37 +3,36 @@ import java.util.BitSet;
 
 class Oktadoku {
 
-    public enum Variante {
+    public enum Style {
         normal, 
         withDiagonals
     }
-    private Variante v;
-    private int[][] board;
+    public Style style;
+    public int[][] board;
 
 
-    public Oktadoku(Variante var) {
-        this.v = var;
+    public Oktadoku(Style style) {
+        this.style = style;
         this.board = new int[8][8];
         
     }
 
-    public void read() {
+    public void getOctadokuFromUser() {
         getInput(board);
     }
 
-    public void write() {
+    public void printResult() {
         printBoard(board);
     }
 
-    public boolean check() {
+    public boolean checkIfValidOctadoku() {
         if (validateInput(board))
             return true; 
 
         return false;
     }
 
-    public void solve() {
-        runTests();
+    public void solveOctadoku() {
         fill(board);
         if(!checkIfAllFieldsHaveNumbers(board)) {
             System.out.println("not solvable :-(");
@@ -48,7 +47,7 @@ class Oktadoku {
     }   
 
     private void printBoard(int[][] board) {
-        if (this.v == Variante.withDiagonals)
+        if (this.style == Style.withDiagonals)
             System.out.println("Oktadoku with diagonals");
         else System.out.println("Oktadoku");
 
@@ -82,19 +81,6 @@ class Oktadoku {
         System.out.println("+-----+-----+-----+-----+");
     }
 
-    private void runTests(){
-        testCheckIfNumberInColumn();
-        testCheckIfNumberInRow();
-        testCheckIfNumberInDiagonal();
-        testCheckIfValidRows();
-        testCheckIfValidColumns();
-        testCheckIfValidDiagonals();
-        testCheckIfInputNotNegative();
-        testCheckCorrectNumberRange();
-    }
-
-
-     
 
     private void changePointsToZeros(int[][] board, String input){
         String inputWithZeros = "";
@@ -125,7 +111,6 @@ class Oktadoku {
         }
     }
 
-    
 
     private boolean fill(int[][] board) {
         int cardinality = fillSimple(board);
@@ -212,7 +197,7 @@ class Oktadoku {
     }
     
     private boolean canNumberBePlacedHere(int[][] board, int number, int row, int col) {
-        if (this.v == Variante.withDiagonals) {
+        if (this.style == Style.withDiagonals) {
             return !checkIfNumberInColumn(board, number, col)
                 && !checkIfNumberInRow(board, number, row)
                 && !checkIfNumberInBox(board, number, row, col)
@@ -223,84 +208,27 @@ class Oktadoku {
             && !checkIfNumberInRow(board, number, row)
             && !checkIfNumberInBox(board, number, row, col);
     }
-
-    private int[][] sampleBoard1 = {
-        {3,0,0,0,0,0,0,5},
-        {0,0,7,6,0,0,0,0},
-        {0,2,0,0,0,7,0,0},
-        {0,5,0,4,0,0,6,1}, 
-        {6,1,0,0,8,0,2,0},
-        {0,0,4,0,0,0,8,0},
-        {0,0,0,0,5,3,0,0},
-        {2,0,0,0,0,0,0,6}
-    };
-
-    private int[][] sampleBoard2 = {
-        {0,6,0,1,0,0,0,0},
-        {0,4,0,0,8,6,0,2},
-        {4,0,0,3,5,8,0,0},
-        {0,0,0,0,0,0,0,0}, 
-        {0,0,0,4,0,0,0,0},
-        {0,0,0,8,0,0,0,6},
-        {7,0,1,0,0,0,2,8},
-        {0,0,0,0,7,0,4,0}
-    };
-
-    private int[][] sampleBoard3 = {
-        {2,6,-8,1,0,9,0,0},
-        {3,3,8,0,8,6,0,2},
-        {4,2,8,3,5,8,0,0},
-        {0,0,0,2,4,0,0,0}, 
-        {0,10,0,4,-1,0,0,0},
-        {0,7,2,8,0,3,0,6},
-        {7,2,1,0,0,0,2,8},
-        {0,0,0,0,7,0,4,1000}
-    };
-    
    
     private boolean validateInput(int[][] board) {
-        if (this.v == Variante.withDiagonals) {
+        if (this.style == Style.withDiagonals) {
              return checkIfValidRows(board)
                 && checkIfValidColums(board)
                 && checkIfInputNotNegative(board)
-                && checkCorrectNumberRange(board)
+                && checkIfCorrectNumberRange(board)
                 && checkIfValidDiagonals(board);
         }
 
         return checkIfValidRows(board)
             && checkIfValidColums(board)
             && checkIfInputNotNegative(board)
-            && checkCorrectNumberRange(board)
-            && checkCorrectNumberRange(board);
+            && checkIfCorrectNumberRange(board)
+            && checkIfCorrectNumberRange(board);
     }
 
 
-    private void testCheckIfValidRows() {
-        test1checkIfValidRows();
-        test2checkIfValidRows();
-    }
-
-
-    private void test1checkIfValidRows() {
-        boolean expected = true;
-        boolean result = checkIfValidRows(sampleBoard2);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private void test2checkIfValidRows() {
-        boolean expected = false;
-        boolean result = checkIfValidRows(sampleBoard3);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
 
        
-    private boolean checkIfValidRows(int[][] board) {
+    public boolean checkIfValidRows(int[][] board) {
         int counter = 0; 
         
         for (int number = 1; number <= 8; number += 1) {
@@ -321,31 +249,7 @@ class Oktadoku {
         return true;
     }
 
-    private void testCheckIfValidColumns() {
-        test1checkIfValidColumns();
-        test2checkIfValidColumns();
-    }
-
-
-    private void test1checkIfValidColumns() {
-        boolean expected = true;
-        boolean result = checkIfValidColums(sampleBoard2);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private void test2checkIfValidColumns() {
-        boolean expected = false;
-        boolean result = checkIfValidColums(sampleBoard3);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private boolean checkIfValidColums(int[][] board) {
+    public boolean checkIfValidColums(int[][] board) {
         int counter = 0; 
         
         for (int number = 1; number <= 8; number += 1) {
@@ -366,31 +270,8 @@ class Oktadoku {
         return true;
     }
 
-    private void testCheckIfValidDiagonals() {
-        test1checkIfValidDiagonals();
-        test2checkIfValidDiagonals();
-    }
 
-
-    private void test1checkIfValidDiagonals() {
-        boolean expected = true;
-        boolean result = checkIfValidDiagonals(sampleBoard2);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private void test2checkIfValidDiagonals() {
-        boolean expected = false;
-        boolean result = checkIfValidDiagonals(sampleBoard3);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private boolean checkIfValidDiagonals(int[][] board) {
+    public boolean checkIfValidDiagonals(int[][] board) {
         int counter = 0;
         
         for (int number = 1; number <= 8; number += 1) {
@@ -418,31 +299,8 @@ class Oktadoku {
         return true;
     }
 
-    private void testCheckIfInputNotNegative() {
-        test1checkIfInputNotNegative1();
-        test2checkIfInputNotNegative2();
-    }
 
-
-    private void test2checkIfInputNotNegative2() {
-        boolean expected = true;
-        boolean result = checkIfInputNotNegative(sampleBoard2);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private void test1checkIfInputNotNegative1() {
-        boolean expected = false;
-        boolean result = checkIfInputNotNegative(sampleBoard3);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private boolean checkIfInputNotNegative(int[][] board) {
+    public boolean checkIfInputNotNegative(int[][] board) {
         for (int row = 0; row < board.length; row +=1){
             for (int col = 0; col < board[row].length; col += 1) {
                 if (board[row][col] < 0) {
@@ -454,31 +312,8 @@ class Oktadoku {
         return true;
     }
 
-    private void testCheckCorrectNumberRange() {
-        test1CorrectNumberRange();
-        test2CorrectNumberRange();
-    }
 
-
-    private void test1CorrectNumberRange() {
-        boolean expected = true;
-        boolean result = checkCorrectNumberRange(sampleBoard2);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private void test2CorrectNumberRange() {
-        boolean expected = false;
-        boolean result = checkCorrectNumberRange(sampleBoard3);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private boolean checkCorrectNumberRange(int[][] board) {
+    public boolean checkIfCorrectNumberRange(int[][] board) {
         for (int row = 0; row < board.length; row +=1){
             for (int col = 0; col < board[row].length; col += 1) {
                 if (board[row][col] > 8) {
@@ -490,62 +325,8 @@ class Oktadoku {
         return true;
     }
 
-    private void testCheckIfNumberInColumn() {
-        test1Column();
-        test2Column();
-        test3Column();
-        test4Column();
-    }
 
-    private void test1Column() {
-        int number = 3;
-        int col = 1;
-
-        boolean expected = false;
-        boolean result = checkIfNumberInColumn(sampleBoard1, number, col);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private void test2Column() {
-        int number = 5;
-        int col = 1;
-
-        boolean expected = true;
-        boolean result = checkIfNumberInColumn(sampleBoard1, number, col);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private void test3Column() {
-        int number = 6;
-        int col = 7;
-
-        boolean expected = true;
-        boolean result = checkIfNumberInColumn(sampleBoard1, number, col);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private void test4Column() {
-        int number = 3;
-        int col = 7;
-
-        boolean expected = false;
-        boolean result = checkIfNumberInColumn(sampleBoard1, number, col);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private boolean checkIfNumberInColumn(int[][] board, int number, int col) {
+    public boolean checkIfNumberInColumn(int[][] board, int number, int col) {
         for (int row = 0; row < board.length; row++){
             if (board[row][col] == number)
                 return true;
@@ -553,59 +334,8 @@ class Oktadoku {
         return false;
     }
 
-    private void testCheckIfNumberInRow() {
-        test1Row();
-        test2Row();
-        test3Row();
-        test4Row();
-    }
 
-    private void test1Row() {
-        int number = 3;
-        int row = 1;
-
-        boolean expected = false;
-        boolean result = checkIfNumberInRow(sampleBoard1, number, row);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-    private void test2Row() {
-        int number = 7;
-        int row = 1;
-
-        boolean expected = true;
-        boolean result = checkIfNumberInRow(sampleBoard1, number, row);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-    private void test3Row() {
-        int number = 6;
-        int row = 7;
-
-        boolean expected = true;
-        boolean result = checkIfNumberInRow(sampleBoard1, number, row);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-    private void test4Row() {
-        int number = 3;
-        int row = 7;
-
-        boolean expected = false;
-        boolean result = checkIfNumberInRow(sampleBoard1, number, row);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private boolean checkIfNumberInRow(int[][] board, int number, int row){
+    public boolean checkIfNumberInRow(int[][] board, int number, int row){
         for (int col = 0; col < board.length; col++){
             if (board[row][col] == number)
                 return true;
@@ -613,78 +343,7 @@ class Oktadoku {
         return false;
     }
 
-    private void testCheckIfNumberInDiagonal() {
-        test1Diagonal();
-        test2Diagonal();
-        test3Diagonal();
-        test4Diagonal();
-        test5Diagonal();
-    }
 
-    private void test1Diagonal() {
-        int number = 3;
-        int row = 1;
-        int col = 1;
-
-        boolean expected = true;
-        boolean result = checkIfNumberInDiagonal(sampleBoard1, number, row, col);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private void test2Diagonal() {
-        int number = 3;
-        int row = 7;
-        int col = 6;
-
-        boolean expected = false;
-        boolean result = checkIfNumberInDiagonal(sampleBoard1, number, row, col);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private void test3Diagonal() {
-        int number = 3;
-        int row = 0;
-        int col = 7;
-
-        boolean expected = false;
-        boolean result = checkIfNumberInDiagonal(sampleBoard1, number, row, col);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private void test4Diagonal() {
-        int number = 5;
-        int row = 0;
-        int col = 7;
-
-        boolean expected = true;
-        boolean result = checkIfNumberInDiagonal(sampleBoard1, number, row, col);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
-
-    private void test5Diagonal() {
-        int number = 3;
-        int row = 3;
-        int col = 3;
-
-        boolean expected = true;
-        boolean result = checkIfNumberInDiagonal(sampleBoard1, number, row, col);
-
-        if (result != expected) {
-            throw new RuntimeException("Test failed with result " + result + " and expected " + expected);
-        }
-    }
 
     private boolean isInFirstDiagonal(int row, int col) {
         if (row == col) {
@@ -702,7 +361,7 @@ class Oktadoku {
         return false;
     }
 
-    private boolean checkIfNumberInDiagonal(int[][] board, int number, int row, int col) {
+    public boolean checkIfNumberInDiagonal(int[][] board, int number, int row, int col) {
         if (isInFirstDiagonal(row, col)) {
             for (int diag = 0; diag < board.length; diag++){
                 if (board[diag][diag] == number)
