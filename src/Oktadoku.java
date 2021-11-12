@@ -17,11 +17,11 @@ class Oktadoku {
         
     }
 
-    public void getOctadokuFromUser() {
+    public void getUserInput() {
         getInput(board);
     }
 
-    public void printResult() {
+    public void printInput() {
         printBoard(board);
     }
 
@@ -47,9 +47,7 @@ class Oktadoku {
     }   
 
     private void printBoard(int[][] board) {
-        if (this.style == Style.withDiagonals)
-            System.out.println("Oktadoku with diagonals");
-        else System.out.println("Oktadoku");
+        System.out.println("Oktadoku");
 
         System.out.println("+-----+-----+-----+-----+");
         for (int row = 0; row < board.length; row++) {
@@ -77,7 +75,6 @@ class Oktadoku {
                 System.out.println("+-----+-----+-----+-----+");
             }
         }
-        
         System.out.println("+-----+-----+-----+-----+");
     }
 
@@ -346,19 +343,11 @@ class Oktadoku {
 
 
     private boolean isInFirstDiagonal(int row, int col) {
-        if (row == col) {
-            return true;
-        }
-
-        return false;
+        return row == col;
     }
 
     private boolean isInSecondDiagonal(int row, int col) {
-        if (row + col == 7) {
-            return true;
-        }
-
-        return false;
+        return row + col == 7;
     }
 
     public boolean checkIfNumberInDiagonal(int[][] board, int number, int row, int col) {

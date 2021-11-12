@@ -5,8 +5,8 @@ class App {
 		    style = Oktadoku.Style.withDiagonals;
 		Oktadoku okta = new Oktadoku(style);
 
-		okta.getOctadokuFromUser();
-		okta.printResult();
+		okta.getUserInput();
+		okta.printInput();
 		if (okta.checkIfValidOctadoku())
 			okta.solveOctadoku();
 		else
