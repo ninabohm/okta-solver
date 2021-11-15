@@ -1,53 +1,59 @@
-import gdp.stdlib.StdIn; 
+//import gdp.stdlib.StdIn;
 import java.util.BitSet;
+import java.util.Scanner;
 
 class Oktadoku {
 
     public enum Style {
-        normal, 
+        normal,
         withDiagonals
     }
     public Style style;
     public int[][] board;
 
-
     public Oktadoku(Style style) {
         this.style = style;
         this.board = new int[8][8];
-        
     }
 
     public void getUserInput() {
-        getInput(board);
+        getUserInput(board);
     }
 
-    public void printInput() {
+    
+    public void getUserInput(int[][] board){
+        System.out.println("User Input: ");
+        Scanner scan = new Scanner(System.in);
+        for (int row = 0; row <= 7; row +=1) {
+            String userInput = scan.next();
+            String userInputWithoutDots = userInput.replace(".", "0");
+            for (int col = 0; col <= 7; col += 1) {
+                board[row][col] = userInputWithoutDots.charAt(col) - 48;
+            }
+        }
+    }
+
+    public void printBoard() {
         printBoard(board);
     }
 
-    public boolean checkIfValidOctadoku() {
-        if (validateInput(board))
-            return true; 
-
-        return false;
+    public boolean checkIfValidOktadoku() {
+        return checkIfValidOktadoku(board);
     }
 
-    public void solveOctadoku() {
-        fill(board);
+    public void solveOktadoku() {
+        checkIfCanBeFilled(board);
         if(!checkIfAllFieldsHaveNumbers(board)) {
             System.out.println("not solvable :-(");
             return;
         }
+        System.out.println();
+        System.out.println("Solution: ");
         printBoard(board);
     }
 
-    public void getInput(int[][] board){
-        String input = StdIn.readAll();
-        changePointsToZeros(board, input);
-    }   
 
-    private void printBoard(int[][] board) {
-        System.out.println("Oktadoku");
+    public void printBoard(int[][] board) {
 
         System.out.println("+-----+-----+-----+-----+");
         for (int row = 0; row < board.length; row++) {
@@ -79,28 +85,7 @@ class Oktadoku {
     }
 
 
-    private void changePointsToZeros(int[][] board, String input){
-        String inputWithZeros = "";
-        inputWithZeros = input.replace(".", "0");
-        divideInputToSubstrings(board, inputWithZeros);
-    }
-    
-    private void divideInputToSubstrings(int[][] board, String input){
-        String rowContent = "";
-        for (int row = 0; row <= 7; row++) {
-            rowContent = input.substring(0,8);
-            writeSubstringToBoard(board, rowContent, row);
-            input = input.substring(9, input.length());
-        }
-    }
-   
-    private void writeSubstringToBoard(int[][] board, String rowContent, int row){
-        for (int col = 0; col < rowContent.length(); col++){
-            board[row][col] = rowContent.charAt(col) - 48;
-            }
-    }
-
-    private void duplicateBoard(int[][] board, int[][] duplicateBoard) {
+    public void duplicateBoard(int[][] board, int[][] duplicateBoard) {
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board.length; col++) {
                 duplicateBoard[row][col] = board[row][col];
@@ -109,8 +94,8 @@ class Oktadoku {
     }
 
 
-    private boolean fill(int[][] board) {
-        int cardinality = fillSimple(board);
+    private boolean checkIfCanBeFilled(int[][] board) {
+        int cardinality = calcLowestCardinality(board);
 
         if (cardinality == 0) {
             return false;
@@ -141,18 +126,18 @@ class Oktadoku {
         return placeable;
     }
 
-    private boolean chooseXFromY(int[][] board, int x, int y){
-        for (int col = 0; col < board.length; col++){
-            for (int row = 0; row < board.length; row++){
+    private boolean chooseXFromY(int[][] board, int x, int y) {
+        for (int col = 0; col < board.length; col++) {
+            for (int row = 0; row < board.length; row++) {
                 if (board[row][col] == 0){
                     BitSet placeable = placeableAtField(board, row, col);
 
                     if (placeable.cardinality() == y) {
-                        int current = placeable.stream().toArray()[x];
+                        int currNoToBePlaced = placeable.stream().toArray()[x];
 
-                        board[row][col] = current;                        
+                        board[row][col] = currNoToBePlaced;
 
-                        return fill(board);
+                        return checkIfCanBeFilled(board);
                     }
                 }
             }
@@ -161,11 +146,11 @@ class Oktadoku {
         return true;
     }
 
-    private int fillSimple(int[][] board){
+    private int calcLowestCardinality(int[][] board) {
         int lowestCardinality = 9;
 
-        for (int col = 0; col < board.length; col++){
-            for (int row = 0; row < board.length; row++){
+        for (int col = 0; col < board.length; col+=1) {
+            for (int row = 0; row < board.length; row+=1) {
                 if (board[row][col] == 0){
                     BitSet placeable = placeableAtField(board, row, col);
                     int cardinality = placeable.cardinality();
@@ -192,7 +177,7 @@ class Oktadoku {
 
         return lowestCardinality;
     }
-    
+
     private boolean canNumberBePlacedHere(int[][] board, int number, int row, int col) {
         if (this.style == Style.withDiagonals) {
             return !checkIfNumberInColumn(board, number, col)
@@ -205,8 +190,8 @@ class Oktadoku {
             && !checkIfNumberInRow(board, number, row)
             && !checkIfNumberInBox(board, number, row, col);
     }
-   
-    private boolean validateInput(int[][] board) {
+
+    private boolean checkIfValidOktadoku(int[][] board) {
         if (this.style == Style.withDiagonals) {
              return checkIfValidRows(board)
                 && checkIfValidColums(board)
