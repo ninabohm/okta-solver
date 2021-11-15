@@ -1,4 +1,3 @@
-//import gdp.stdlib.StdIn;
 import java.util.BitSet;
 import java.util.Scanner;
 
@@ -17,11 +16,6 @@ class Oktadoku {
     }
 
     public void getUserInput() {
-        getUserInput(board);
-    }
-
-    
-    public void getUserInput(int[][] board){
         System.out.println("User Input: ");
         Scanner scan = new Scanner(System.in);
         for (int row = 0; row <= 7; row +=1) {
@@ -34,32 +28,12 @@ class Oktadoku {
     }
 
     public void printBoard() {
-        printBoard(board);
-    }
-
-    public boolean checkIfValidOktadoku() {
-        return checkIfValidOktadoku(board);
-    }
-
-    public void solveOktadoku() {
-        checkIfCanBeFilled(board);
-        if(!checkIfAllFieldsHaveNumbers(board)) {
-            System.out.println("not solvable :-(");
-            return;
-        }
-        System.out.println();
-        System.out.println("Solution: ");
-        printBoard(board);
-    }
-
-
-    public void printBoard(int[][] board) {
 
         System.out.println("+-----+-----+-----+-----+");
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[row].length; col++) {
                 if (col % 2 == 0) {
-                    System.out.print("| ");   
+                    System.out.print("| ");
                 } else {
                     System.out.print(" ");
                 }
@@ -84,6 +58,17 @@ class Oktadoku {
         System.out.println("+-----+-----+-----+-----+");
     }
 
+    public void solveOktadoku() {
+        checkIfCanBeFilled(board);
+        if(!checkIfAllFieldsHaveNumbers(board)) {
+            System.out.println("not solvable :-(");
+            return;
+        }
+        System.out.println();
+        System.out.println("Solution: ");
+        printBoard();
+    }
+
 
     public void duplicateBoard(int[][] board, int[][] duplicateBoard) {
         for (int row = 0; row < board.length; row++) {
@@ -92,7 +77,6 @@ class Oktadoku {
             }
         }
     }
-
 
     private boolean checkIfCanBeFilled(int[][] board) {
         int cardinality = calcLowestCardinality(board);
@@ -191,17 +175,17 @@ class Oktadoku {
             && !checkIfNumberInBox(board, number, row, col);
     }
 
-    private boolean checkIfValidOktadoku(int[][] board) {
+    public boolean checkIfValidOktadoku() {
         if (this.style == Style.withDiagonals) {
              return checkIfValidRows(board)
-                && checkIfValidColums(board)
+                && checkIfValidColumns(board)
                 && checkIfInputNotNegative(board)
                 && checkIfCorrectNumberRange(board)
                 && checkIfValidDiagonals(board);
         }
 
         return checkIfValidRows(board)
-            && checkIfValidColums(board)
+            && checkIfValidColumns(board)
             && checkIfInputNotNegative(board)
             && checkIfCorrectNumberRange(board)
             && checkIfCorrectNumberRange(board);
@@ -211,11 +195,10 @@ class Oktadoku {
 
        
     public boolean checkIfValidRows(int[][] board) {
-        int counter = 0; 
-        
+        int counter = 0;
         for (int number = 1; number <= 8; number += 1) {
-            for (int row = 0; row < board.length; row +=1){
-                for (int col = 0; col < board[row].length; col += 1){
+            for (int row = 0; row < board.length; row +=1) {
+                for (int col = 0; col < board[row].length; col += 1) {
                     if(board[row][col] == number) {
                         counter++;
                     }
@@ -223,15 +206,13 @@ class Oktadoku {
                 if (counter > 1) {
                     return false;
                 }
-
                 counter = 0;
             }
-            counter = 0;
         }
         return true;
     }
 
-    public boolean checkIfValidColums(int[][] board) {
+    public boolean checkIfValidColumns(int[][] board) {
         int counter = 0; 
         
         for (int number = 1; number <= 8; number += 1) {
@@ -244,10 +225,8 @@ class Oktadoku {
                 if (counter > 1) {
                     return false;
                 }
-
                 counter = 0;
             }
-            counter = 0;
         }
         return true;
     }
@@ -290,7 +269,6 @@ class Oktadoku {
                 }
             }
         }
-
         return true;
     }
 
@@ -303,7 +281,6 @@ class Oktadoku {
                 }
             }
         }
-
         return true;
     }
 
@@ -324,8 +301,6 @@ class Oktadoku {
         }
         return false;
     }
-
-
 
     private boolean isInFirstDiagonal(int row, int col) {
         return row == col;
@@ -352,7 +327,6 @@ class Oktadoku {
         
         return false;
     }
-
 
     private int rowBoxStart(int row) {
         //top1-4
@@ -397,7 +371,6 @@ class Oktadoku {
                 }
             }
         }
-
         return false;
     }
 
