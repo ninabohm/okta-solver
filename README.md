@@ -1,4 +1,5 @@
 # Okta-Solver
+A Java app that solves your Oktadoku for you.
 
 ## Features
 - Read an Oktadoku (= sudocu, but with rows, columns and boxes of 8 numbers) 
