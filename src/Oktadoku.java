@@ -28,7 +28,6 @@ class Oktadoku {
     }
 
     public void printBoard() {
-
         System.out.println("+-----+-----+-----+-----+");
         for (int row = 0; row < board.length; row++) {
             for (int col = 0; col < board[row].length; col++) {
@@ -37,20 +36,15 @@ class Oktadoku {
                 } else {
                     System.out.print(" ");
                 }
-
                 System.out.print(board[row][col]);
-
                 if (col % 2 != 0) {
                     System.out.print(" ");
                 }
-
                 if (col == board[row].length - 1) {
                     System.out.print("|");
                 }
             }
-
             System.out.println();
-
             if (row == 3) {
                 System.out.println("+-----+-----+-----+-----+");
             }
@@ -59,7 +53,7 @@ class Oktadoku {
     }
 
     public void solveOktadoku() {
-        checkIfCanBeFilled(board);
+        checkIfSolvable(board);
         if(!checkIfAllFieldsHaveNumbers(board)) {
             System.out.println("not solvable :-(");
             return;
@@ -69,16 +63,7 @@ class Oktadoku {
         printBoard();
     }
 
-
-    public void duplicateBoard(int[][] board, int[][] duplicateBoard) {
-        for (int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board.length; col++) {
-                duplicateBoard[row][col] = board[row][col];
-            }
-        }
-    }
-
-    private boolean checkIfCanBeFilled(int[][] board) {
+    private boolean checkIfSolvable(int[][] board) {
         int cardinality = calcLowestCardinality(board);
 
         if (cardinality == 0) {
@@ -89,12 +74,11 @@ class Oktadoku {
 
         for (int x = 0; x < cardinality; x += 1) {
             duplicateBoard(board, copyBoard);
-            if (chooseXFromY(copyBoard, x, cardinality)) {
+            if (checkIfPosCanBeChosenFromCardinality(copyBoard, x, cardinality)) {
                 duplicateBoard(copyBoard, board);
                 return true;
             }
         }
-
         return false;
     }
 
@@ -110,23 +94,20 @@ class Oktadoku {
         return placeable;
     }
 
-    private boolean chooseXFromY(int[][] board, int x, int y) {
+    private boolean checkIfPosCanBeChosenFromCardinality(int[][] board, int x, int currCardinality) {
         for (int col = 0; col < board.length; col++) {
             for (int row = 0; row < board.length; row++) {
                 if (board[row][col] == 0){
                     BitSet placeable = placeableAtField(board, row, col);
 
-                    if (placeable.cardinality() == y) {
+                    if (placeable.cardinality() == currCardinality) {
                         int currNoToBePlaced = placeable.stream().toArray()[x];
-
                         board[row][col] = currNoToBePlaced;
-
-                        return checkIfCanBeFilled(board);
+                        return checkIfSolvable(board);
                     }
                 }
             }
         }
-
         return true;
     }
 
@@ -158,7 +139,6 @@ class Oktadoku {
                 }
             }
         }
-
         return lowestCardinality;
     }
 
@@ -388,6 +368,14 @@ class Oktadoku {
         }
 
         return true;
+    }
+
+    public void duplicateBoard(int[][] board, int[][] duplicateBoard) {
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board.length; col++) {
+                duplicateBoard[row][col] = board[row][col];
+            }
+        }
     }
 }
 
